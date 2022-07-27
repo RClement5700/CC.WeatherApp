@@ -11,20 +11,24 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.ui.Modifier
+import androidx.hilt.navigation.compose.hiltViewModel
 import com.plcoding.weatherapp.presentation.ui.theme.DarkBlue
 import com.plcoding.weatherapp.presentation.ui.theme.DeepBlue
 import com.plcoding.weatherapp.presentation.ui.theme.WeatherAppTheme
+import dagger.hilt.android.AndroidEntryPoint
 
+@AndroidEntryPoint
 class MainActivity : ComponentActivity() {
-    private val viewModel: WeatherViewModel by viewModels()
+    private lateinit var viewModel: WeatherViewModel
     private lateinit var permissionLauncher: ActivityResultLauncher<Array<String>>
     override fun onCreate(savedInstanceState: Bundle?) {
-        permissionLauncher = registerForActivityResult(ActivityResultContracts.RequestMultiplePermissions()) {
-            viewModel.loadWeatherInfo()
-        }
-        permissionLauncher.launch(arrayOf(Manifest.permission.ACCESS_COARSE_LOCATION, Manifest.permission.ACCESS_FINE_LOCATION))
         super.onCreate(savedInstanceState)
         setContent {
+            viewModel = hiltViewModel()
+            permissionLauncher = registerForActivityResult(ActivityResultContracts.RequestMultiplePermissions()) {
+                viewModel.loadWeatherInfo()
+            }
+            permissionLauncher.launch(arrayOf(Manifest.permission.ACCESS_COARSE_LOCATION, Manifest.permission.ACCESS_FINE_LOCATION))
             WeatherAppTheme {
                 Column(modifier = Modifier
                     .fillMaxSize()
